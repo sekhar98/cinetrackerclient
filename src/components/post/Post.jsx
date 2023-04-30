@@ -1,56 +1,109 @@
 import "./post.scss";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
-import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { Link } from "react-router-dom";
-import Comments from "../comments/Comments";
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import { useState } from "react";
+import Button from '@mui/material/Button';
+import { makeRequest } from "../../axios";
+import StarIcon from '@mui/icons-material/Star';
 
-const Post = ({ post }) => {
-  const [commentOpen, setCommentOpen] = useState(false);
+const Post = ({post}) => {
 
   //TEMPORARY
-  const liked = false;
+  const [err, setErr] = useState(null);
+  const [clicked, setClicked] = useState(false)
+  const [watch, setWatch] = useState(false)
+  
+  //Function to add and remove favorites.
+  const addfav = async (e)=>
+  {
+    e.preventDefault();
+    if(!clicked)
+    {
+      try
+      {
+        await makeRequest.post("/favorites",{id:post.id})          
+        setClicked(true);
+      }
+      catch(err)
+      {
+        setErr(err.response); 
+      }
+    }
+    else
+    {
+      try 
+      {
+        await makeRequest.post("/favorites/delete",{id:post.id})
+        setClicked(false);
+      }
+      catch(err)
+      {
+        setErr(err.response); 
+      }
+    }
+    
+  }; 
+
+  const addWatchlist = async (e)=>
+  {
+    e.preventDefault();
+    if(!watch)
+    {
+      try
+      {
+        await makeRequest.post("/watchlist",{id:post.id})          
+        setWatch(true);
+      }
+      catch(err)
+      {
+        setErr(err.response); 
+      }
+    }
+    else
+    {
+      try 
+      {
+        await makeRequest.post("/watchlist/delete",{id:post.id})
+        setWatch(false);
+      }
+      catch(err)
+      {
+        setErr(err.response); 
+      }
+    }
+    
+  }; 
+
 
   return (
     <div className="post">
       <div className="container">
-        <div className="user">
-          <div className="userInfo">
-            <img src={post.profilePic} alt="" />
-            <div className="details">
-              <Link
-                to={`/profile/${post.userId}`}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <span className="name">{post.name}</span>
-              </Link>
-              <span className="date">1 min ago</span>
-            </div>
-          </div>
-          <MoreHorizIcon />
-        </div>
         <div className="content">
-          <p>{post.desc}</p>
-          <img src={post.img} alt="" />
+          <div className="title">
+            <b><p style={{overflow: "hidden"}} >Movie Name : {post.title}</p></b>
+
+          </div>
+          <img src={post.poster} alt="" />
+          <p>{post.overview}</p>
         </div>
         <div className="info">
-          <div className="item">
-            {liked ? <FavoriteOutlinedIcon /> : <FavoriteBorderOutlinedIcon />}
-            12 Likes
-          </div>
-          <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
-            <TextsmsOutlinedIcon />
-            12 Comments
-          </div>
-          <div className="item">
-            <ShareOutlinedIcon />
-            Share
-          </div>
+          <Button >
+            {clicked ? <FavoriteOutlinedIcon onClick={addfav}/> : 
+              <FavoriteBorderOutlinedIcon onClick={addfav}/>}
+          </Button>
+          <Button >
+            {watch ? <BookmarkAddedIcon onClick={addWatchlist}/> : 
+              <BookmarkBorderIcon onClick={addWatchlist}/>}
+          </Button>
+          <div className="rating">
+            <p>Rating : <b>{post.rating} <StarIcon style={{ color: 'yellow' }}/></b></p>
+          </div>  
+        
+
+          
         </div>
-        {commentOpen && <Comments />}
       </div>
     </div>
   );

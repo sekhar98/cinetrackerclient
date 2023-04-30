@@ -1,16 +1,48 @@
 import { Link } from "react-router-dom";
 import "./register.scss";
+import { useState } from "react";
+import axios from "axios";
 
 const Register = () => {
+
+  //Declaring our set of useState variables
+  const [inputs,setInputs] = useState({
+    username:"",
+    password:""
+  })
+
+  const [err, setErr] = useState(null);
+  const[msg,setMsg] = useState(null);
+
+  const handleChange = e=>{
+    setInputs(prev=>({
+      ...prev, [e.target.name]:e.target.value}))
+  }
+
+  
+  const handleClick = async (e)=>{
+    e.preventDefault();
+    try{
+      await axios.post("http://localhost:8800/api/auth/register", inputs);
+      setMsg("Created a user");
+    }
+    catch(err){
+      setErr(err.response.data);
+    }
+
+ 
+  };
+
+
+
   return (
     <div className="register">
       <div className="card">
         <div className="left">
-          <h1>Lama Social.</h1>
+          <h1>Cine Tracker</h1>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero cum,
-            alias totam numquam ipsa exercitationem dignissimos, error nam,
-            consequatur.
+            From classics to new releases, we've got your movie cravings covered.
+            Movies, movies, and more movies - what's not to love?
           </p>
           <span>Do you have an account?</span>
           <Link to="/login">
@@ -20,11 +52,12 @@ const Register = () => {
         <div className="right">
           <h1>Register</h1>
           <form>
-            <input type="text" placeholder="Username" />
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <input type="text" placeholder="Name" />
-            <button>Register</button>
+            <input type="text" placeholder="Username" name="username" onChange={handleChange} />
+
+            <input type="password" placeholder="Password" name="password" onChange={handleChange} />
+            <b><p className="success">{msg && msg}</p></b>
+            <p className="error">{err && err}</p>
+            <button onClick={handleClick}>Register</button>
           </form>
         </div>
       </div>

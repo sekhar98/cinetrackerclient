@@ -6,7 +6,7 @@
   justify-content: center;
 
   .card {
-    width: 50%;
+    width: 60%;
     display: flex;
     background-color: white;
     border-radius: 10px;
@@ -16,7 +16,7 @@
     .left {
       flex: 1;
       background: linear-gradient(rgba(39, 11, 96, 0.5), rgba(39, 11, 96, 0.5)),
-        url("https://images.pexels.com/photos/3228727/pexels-photo-3228727.jpeg?auto=compress&cs=tinysrgb&w=1600")
+        url("https://images.pexels.com/photos/7991139/pexels-photo-7991139.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")
           center;
       background-size: cover;
       padding: 50px;
@@ -69,6 +69,10 @@
         border: none;
         border-bottom: 1px solid lightgray;
         padding: 20px 10px;
+        }
+
+        .error{
+          color : red;
         }
         
         button {

@@ -1,5 +1,9 @@
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
+import Watchlist from "./components/watchlist/watchlist";
+import Visualization from "./components/visualization/visualization";
+import Favorites from "./components/favorites/Favorites";
+import  Search  from "./components/search/Search";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -8,32 +12,33 @@ import {
   Navigate,
 } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
-import LeftBar from "./components/leftBar/LeftBar";
-import RightBar from "./components/rightBar/RightBar";
 import Home from "./pages/home/Home";
-import Profile from "./pages/profile/Profile";
 import "./style.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 
 function App() {
   const {currentUser} = useContext(AuthContext);
 
   const { darkMode } = useContext(DarkModeContext);
 
+  const queryClient = new QueryClient();
   const Layout = () => {
+    
     return (
+      <QueryClientProvider client={queryClient}>
       <div className={`theme-${darkMode ? "dark" : "light"}`}>
         <Navbar />
         <div style={{ display: "flex" }}>
-          <LeftBar />
           <div style={{ flex: 6 }}>
             <Outlet />
           </div>
-          <RightBar />
         </div>
       </div>
+      
+      </QueryClientProvider>
     );
   };
 
@@ -58,10 +63,7 @@ function App() {
           path: "/",
           element: <Home />,
         },
-        {
-          path: "/profile/:id",
-          element: <Profile />,
-        },
+
       ],
     },
     {
@@ -72,6 +74,22 @@ function App() {
       path: "/register",
       element: <Register />,
     },
+    {
+      path: "/favorites",
+      element: <Favorites />
+    },
+    {
+      path: "/watchlist",
+      element: <Watchlist />
+    },
+    {
+      path: "/visualization",
+      element: <Visualization />
+    },
+    {
+      path: "/search",
+      element : <Search />
+    }
   ]);
 
   return (

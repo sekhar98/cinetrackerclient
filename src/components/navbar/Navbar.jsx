@@ -1,52 +1,91 @@
 import "./navbar.scss";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
-import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link } from "react-router-dom";
+import LogoutIcon from '@mui/icons-material/Logout';
+import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
+import BookmarksIcon from '@mui/icons-material/Bookmarks';
+import InsightsIcon from '@mui/icons-material/Insights';
+import { Link,useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
+import { makeRequest } from "../../axios";
+import { useState } from "react";
+import Button from '@mui/material/Button';
 
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser } = useContext(AuthContext);
+  const [err, setErr] = useState(null);
+  const navigate = useNavigate();
+  //Logout function
+  const handleLogout = async (e) =>
+  {
+    e.preventDefault();
+    try{
+      await makeRequest.post("auth/logout")
+      navigate("/login");
+    }
+    catch(err)
+    {
+      setErr(err.response.data)
+    }
+  }
+
+  // Code to handle search functionality. 
+  const [inputs,setInputs] = useState({
+    search:"",
+  });
+
+  const handleChange = e=>{
+    setInputs({[e.target.name]:e.target.value})
+  }
 
   return (
+    
     <div className="navbar">
       <div className="left">
         <Link to="/" style={{ textDecoration: "none" }}>
-          <span>lamasocial</span>
+          <span>CineTracker</span>
         </Link>
-        <HomeOutlinedIcon />
         {darkMode ? (
           <WbSunnyOutlinedIcon onClick={toggle} />
         ) : (
           <DarkModeOutlinedIcon onClick={toggle} />
         )}
-        <GridViewOutlinedIcon />
+        <div className="favoriteButton">
+          <Link to="/favorites">
+            <Button startIcon={<FavoriteOutlinedIcon />} />
+          </Link>
+
+          <Link to="/watchlist">
+            <Button startIcon={<BookmarksIcon />} />
+          </Link>
+
+        </div>
         <div className="search">
-          <SearchOutlinedIcon />
-          <input type="text" placeholder="Search..." />
+          
+          <input type="text" placeholder="Search..." name="search" onKeyUp={handleChange} />
+          <Link to ="/search" state={{search:inputs.search}} >
+            <Button startIcon={<SearchOutlinedIcon />}/>
+          </Link>
+            
+            
         </div>
       </div>
       <div className="right">
-        <PersonOutlinedIcon />
-        <EmailOutlinedIcon />
-        <NotificationsOutlinedIcon />
-        <div className="user">
-          <img
-            src={currentUser.profilePic}
-            alt=""
-          />
-          <span>{currentUser.name}</span>
-        </div>
+      <Link to="/visualization">
+            <Button startIcon={<InsightsIcon />} />
+          </Link>
+      <Button variant="outlined" endIcon={<LogoutIcon />} onClick={handleLogout}>
+          <b>Logout</b>
+      </Button>
+        
+        
       </div>
     </div>
+
   );
 };
 
