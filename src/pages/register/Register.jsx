@@ -23,7 +23,7 @@ const Register = () => {
   const handleClick = async (e)=>{
     e.preventDefault();
     try{
-      await axios.post("http://localhost:8800/api/auth/register", inputs);
+      await axios.post("https://cinetracker.herokuapp.com/api/auth/register", inputs);
       setMsg("Created a user");
     }
     catch(err){
